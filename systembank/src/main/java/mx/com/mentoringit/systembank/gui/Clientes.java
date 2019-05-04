@@ -145,6 +145,8 @@ public class Clientes extends JInternalFrame {
 	}
 
 	protected void saveOrUpdate() {
+		JOptionPane.showMessageDialog(admin, "Funcionalidad no implementada");
+
 		for (int i = 0; i < clientes.size(); i++) {
 			if (modelClientes.getIdClientesUpdate().get(
 					clientes.get(i).getIdCliente()) != null) {
