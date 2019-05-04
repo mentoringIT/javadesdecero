@@ -1,8 +1,11 @@
 package mx.com.mentoringit.systembank.conn;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class Coneccion {
 
@@ -12,25 +15,49 @@ public class Coneccion {
 	private String pwd;
 	private String url;
 	private String bd;
+	private String server;
+
+	private InputStream input = null;
+	Properties dbaccess = new Properties();
 
 	// constructor privado impide crear objetos desde fuera de la clase
 	private Coneccion() {
-		System.out.println("objeto creado");
+		System.out.println("Creando conexion");
 
-		usr = "root";
-		pwd = "root";
-		url = "jdbc:mysql://localhost:3306/";
-		bd = "sistemabancario";
+		if (loadDbAccessProps()) {
+			usr = dbaccess.getProperty("usr");
+			pwd = dbaccess.getProperty("pwd");
+			bd = dbaccess.getProperty("bd");
+			server = dbaccess.getProperty("server");
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+				System.out.println("Driver no encontrado");
+			}
 
-		// ponemos en memoria el nombre de la clase
-		// a buscar en las librerias para conectarnos a la BD
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} else {
+			System.out.println("Error al cargar el archivo de proiedades");
 		}
+
 	}
+	
+	public boolean loadDbAccessProps() {
+		boolean result = false;
+
+		// cargarmos archivo de propiedades
+		try {
+			input = this.getClass().getResourceAsStream("dbaccess.properties");
+			dbaccess.load(input);
+			result = true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			result = false;
+		}
+		return result;
+
+	}
+
 
 	/**
 	 * metodo estatico que regresa una 
@@ -48,11 +75,10 @@ public class Coneccion {
 		Connection conect = null;
 
 		try {
-			conect = DriverManager.getConnection(url + bd, usr, pwd);
+			conect = DriverManager.getConnection(server + bd, usr, pwd);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return conect;
 	}
 }
