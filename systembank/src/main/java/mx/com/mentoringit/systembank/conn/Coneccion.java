@@ -30,7 +30,7 @@ public class Coneccion {
 			bd = dbaccess.getProperty("bd");
 			server = dbaccess.getProperty("server");
 			try {
-				Class.forName("com.mysql.jdbc.Driver");
+				Class.forName("com.mysql.cj.jdbc.Driver");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				System.out.println("Driver no encontrado");
